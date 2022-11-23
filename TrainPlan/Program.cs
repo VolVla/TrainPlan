@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace TrainPlan
@@ -7,16 +7,14 @@ namespace TrainPlan
     {
         static void Main()
         {
-            RailStation rail = new RailStation();
+            RailStation railStation = new RailStation();
             bool isWork = true;
 
             while (isWork)
             {
-                rail.CreateDirection();
-                rail.SellTickets();
-                rail.FormationTrain(rail.NumberPasseger);
-                rail.SaveDirection();
-                rail.SendTrain();
+                railStation.CreateDirection();
+                railStation.CreateTrain();
+                railStation.SendTrain();
                 Console.WriteLine($"Вы хотите выйти из программы?Нажмите Enter.\nДля продолжение работы программы нажмите любую другую клавишу");
 
                 if (Console.ReadKey().Key == ConsoleKey.Enter)
@@ -26,43 +24,64 @@ namespace TrainPlan
                 }
 
                 Console.Clear();
-                rail.ShowInfoMarch();
+                railStation.ShowInfoMarch();
             }
         }
     }
 
     class RailStation
     {
-        private Train _train = new Train();
-        private List<Train> _trains = new List<Train>();
-        private List<string> _direction = new List<string>();
-        private List<int> _numberPasseger = new List<int>();
-        private string _firstStation = "";
-        private string _secondStation = "";
-        public int NumberPasseger = 0;
-
-        public void ShowInfoMarch()
-        {
-            if (_direction[_direction.Count - 2] != "")
-            {
-                Console.WriteLine($"Назначение {_direction[_direction.Count - 2]} - {_direction[_direction.Count - 1]}");
-                Console.WriteLine($"Количество пассажиров - {_numberPasseger[_numberPasseger.Count - 1]}");
-
-                if (_trains[_trains.Count - 1].GetTrainLenght() != 0)
-                {
-                    Console.WriteLine("Состав поезда:");
-                    _trains[_trains.Count - 1].RenderTrain();
-                }
-            }
-            else
-            {
-                Console.WriteLine("Направление ещё не создано ");
-            }
-        }
+        private List<Train> _trainsList = new List<Train>();
+        private TicketOffice _ticketOffice = new TicketOffice();
+        private Direction _direction = new Direction();
 
         public void CreateDirection()
         {
-            if (NumberPasseger == 0)
+            _direction.Create();
+        }
+
+        public int SellTicket()
+        {
+            return _ticketOffice.Sell();
+        }
+
+        public void CreateTrain()
+        {
+            Train train = new Train(SellTicket());
+            _trainsList.Add(train);
+        }
+
+        public void SendTrain()
+        {
+            Console.WriteLine("Поезд отправлен\n");
+        }
+
+        public void ShowInfoMarch()
+        {
+            Console.WriteLine($"Назначение {_direction.FirstStation} - {_direction.SecondStation}");
+            Console.WriteLine($"Количество пассажиров - {_trainsList[_trainsList.Count - 1].numberPasseger}");
+
+            if (_trainsList[_trainsList.Count - 1].GetTrainLenght() != 0)
+            {
+                Console.WriteLine("Состав поезда:");
+                _trainsList[_trainsList.Count - 1].RenderTrain();
+            }
+        }
+    }
+
+    class Direction
+    {
+        private string _firstStation = "";
+        private string _secondStation = "";
+
+        public string FirstStation { get; private set; }
+        public string SecondStation { get; private set; }
+
+        public void Create()
+        {
+            bool isWork = true;
+
+            while (isWork)
             {
                 Console.WriteLine("Введите станцию отправления:");
                 _firstStation = Console.ReadLine();
@@ -72,98 +91,85 @@ namespace TrainPlan
                 if (_firstStation.ToLower() == _secondStation.ToLower())
                 {
                     Console.WriteLine("Станция отправления не должна совпадать со станцией назначение");
-                    _firstStation = "";
-                    _secondStation = "";
                 }
-            }
-        }
-
-        public void SellTickets()
-        {
-            if(NumberPasseger == 0)
-            {
-                if (_firstStation != "") 
+                else
                 {
-                    Random random = new Random();
-                    int minimumPassager = 0;
-                    int maximumPassager = 101;
-                    NumberPasseger = random.Next(minimumPassager, maximumPassager);
-                    Console.WriteLine($"Продано {NumberPasseger} билетов");
+                    isWork = false;
                 }
             }
+            FirstStation = _firstStation;
+            SecondStation = _secondStation;
         }
+    }
 
-        public void SaveDirection()
-        {
-            _direction.AddRange(new string[] { _firstStation, _secondStation });
-            _numberPasseger.Add(NumberPasseger);
-            _trains.Add(_train);
-        }
+    class TicketOffice
+    {
+        private int _numberPasseger = 0;
+        private int _minimumPassager = 0;
+        private int _maximumPassager = 101;
 
-        public void SendTrain()
+        public int Sell()
         {
-            if (_train.GetTrainLenght() != 0)
-            {
-                _train.DisbandTrain();
-                NumberPasseger = 0;
-                _firstStation = "";
-                _secondStation = "";
-                Console.WriteLine("Поезд отправлен\n");
-            }
-        }
-
-        public void FormationTrain(int value)
-        {
-            _train.CreateTrain(value);
+            Random random = new Random();
+            _numberPasseger = random.Next(_minimumPassager, _maximumPassager);
+            Console.WriteLine($"Продано {_numberPasseger} билетов");
+            return _numberPasseger;
         }
     }
 
     class Train
     {
-        private List<Wagon> _typeWagons = new List<Wagon> { new Wagon(20), new Wagon(40), new Wagon(15) };
+        private List<int> _typeWagons = new List<int> { 20, 40, 15 };
         private List<Wagon> _wagons = new List<Wagon>();
 
-        public void CreateTrain(int valuePassengers)
-        {
-            int numberPassengers = valuePassengers;
+        public int numberPasseger { get; private set; }
 
-            if (numberPassengers != 0 && _wagons.Count == 0)
+        public Train(int numberPassagers)
+        {
+            numberPasseger = numberPassagers;
+            AddWagon(numberPassagers);
+        }
+
+        public void AddWagon(int numberPassagers)
+        {
+            if (numberPassagers != 0 && _wagons.Count == 0)
             {
                 bool isWork = true;
 
-                while (isWork == true)
+                while (isWork == true && numberPassagers > 0)
                 {
-                    if(numberPassengers > 0)
+                    Console.WriteLine($"Колличество пассажиров : {numberPassagers}\nВыберете Вагон: ");
+
+                    for (int i = 0; i < _typeWagons.Count; i++)
                     {
-                        Console.WriteLine($"Колличество пассажиров : {numberPassengers}\nВыберете Вагон: ");
+                        Console.WriteLine($"{i + 1}.Вагоон на {_typeWagons[i]} мест");
+                    }
 
-                        for(int i = 0; i < _typeWagons.Count; i++)
+                    bool number = int.TryParse(Console.ReadLine(), out int input);
+
+                    if (number == true)
+                    {
+                        if (input <= _typeWagons.Count && numberPassagers > 0)
                         {
-                            Console.WriteLine($"{i + 1}.Вагоон на {_typeWagons[i].NumberPlace} мест");
+                            Wagon wagon = new Wagon(_typeWagons[input - 1]);
+                            _wagons.Add(wagon);
+                            numberPassagers -= _typeWagons[input - 1];
+                            Console.WriteLine("Вагон добавлен");
                         }
-
-                        bool Number =  int.TryParse(Console.ReadLine(), out int input);
-
-                        if(Number == true)
+                        else
                         {
-                            if (input <= _typeWagons.Count && numberPassengers > 0)
-                            {
-                                _wagons.Add(_typeWagons[input - 1]);
-                                numberPassengers -= _typeWagons[input - 1].NumberPlace;
-                                Console.WriteLine("Вагон добавлен");
-                            }
-                            else
-                            {
-                                Console.WriteLine("Данного вагона нет в списке или нет не распределенных пасссажиров");
-                            }
+                            Console.WriteLine("Данного вагона нет в списке или нет не распределенных пасссажиров");
                         }
                     }
-                    else
-                    {
-                        Console.WriteLine("Все пассажиры распределены");
-                        isWork = false;
-                    }
-                } 
+                }
+            }
+        }
+
+        public void RenderTrain()
+        {
+            for (int i = 0; i < _wagons.Count; i++)
+            {
+                Console.WriteLine($"Вагон {i + 1}. Мест:  {_wagons[i].NumberPlace}");
             }
         }
 
@@ -171,24 +177,11 @@ namespace TrainPlan
         {
             return _wagons.Count;
         }
-
-        public void DisbandTrain()
-        {
-            _wagons.RemoveRange(0, _wagons.Count);
-        }
-
-        public void RenderTrain()
-        {
-            for(int i = 0; i < _wagons.Count; i++)
-            {
-                Console.WriteLine($"Вагон {i+1}. Мест:  {_wagons[i].NumberPlace}");
-            }
-        }
     }
 
     class Wagon
     {
-        public int NumberPlace { get;private set; }
+        public int NumberPlace { get; private set; }
 
         public Wagon(int lenght)
         {
