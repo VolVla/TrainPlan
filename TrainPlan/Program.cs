@@ -7,24 +7,24 @@ namespace TrainPlan
     {
         static void Main()
         {
-            RailStation railStation = new RailStation();
-            bool isWork = true;
+            RailStation RailStation = new RailStation();
+            bool IsWork = true;
 
-            while (isWork)
+            while (IsWork)
             {
-                railStation.CreateDirection();
-                railStation.CreateTrain();
-                railStation.SendTrain();
+                RailStation.CreateDirection();
+                RailStation.CreateTrain();
+                RailStation.SendTrain();
                 Console.WriteLine($"Вы хотите выйти из программы?Нажмите Enter.\nДля продолжение работы программы нажмите любую другую клавишу");
 
                 if (Console.ReadKey().Key == ConsoleKey.Enter)
                 {
-                    isWork = false;
+                    IsWork = false;
                     Console.WriteLine("Вы вышли из программы");
                 }
 
                 Console.Clear();
-                railStation.ShowInfoMarch();
+                RailStation.ShowInfoMarch();
             }
         }
     }
@@ -47,8 +47,8 @@ namespace TrainPlan
 
         public void CreateTrain()
         {
-            Train train = new Train(SellTicket());
-            _trainsList.Add(train);
+            Train Train = new Train(SellTicket());
+            _trainsList.Add(Train);
         }
 
         public void SendTrain()
@@ -59,7 +59,7 @@ namespace TrainPlan
         public void ShowInfoMarch()
         {
             Console.WriteLine($"Назначение {_direction.FirstStation} - {_direction.SecondStation}");
-            Console.WriteLine($"Количество пассажиров - {_trainsList[_trainsList.Count - 1].numberPasseger}");
+            Console.WriteLine($"Количество пассажиров - {_trainsList[_trainsList.Count - 1].NumberPassegers}");
 
             if (_trainsList[_trainsList.Count - 1].GetTrainLenght() != 0)
             {
@@ -79,9 +79,9 @@ namespace TrainPlan
 
         public void Create()
         {
-            bool isWork = true;
+            bool IsWork = true;
 
-            while (isWork)
+            while (IsWork)
             {
                 Console.WriteLine("Введите станцию отправления:");
                 _firstStation = Console.ReadLine();
@@ -94,7 +94,7 @@ namespace TrainPlan
                 }
                 else
                 {
-                    isWork = false;
+                    IsWork = false;
                 }
             }
             FirstStation = _firstStation;
@@ -107,11 +107,11 @@ namespace TrainPlan
         private int _numberPasseger = 0;
         private int _minimumPassager = 0;
         private int _maximumPassager = 101;
+        Random NumberPassager = new Random();
 
         public int Sell()
         {
-            Random random = new Random();
-            _numberPasseger = random.Next(_minimumPassager, _maximumPassager);
+            _numberPasseger = NumberPassager.Next(_minimumPassager, _maximumPassager);
             Console.WriteLine($"Продано {_numberPasseger} билетов");
             return _numberPasseger;
         }
@@ -122,38 +122,38 @@ namespace TrainPlan
         private List<int> _typeWagons = new List<int> { 20, 40, 15 };
         private List<Wagon> _wagons = new List<Wagon>();
 
-        public int numberPasseger { get; private set; }
+        public int NumberPassegers { get; private set; }
 
         public Train(int numberPassagers)
         {
-            numberPasseger = numberPassagers;
-            AddWagon(numberPassagers);
+            NumberPassegers = numberPassagers;
+            AddWagon(NumberPassegers);
         }
 
-        public void AddWagon(int numberPassagers)
+        public void AddWagon(int NumberPassagers)
         {
-            if (numberPassagers != 0 && _wagons.Count == 0)
+            if (NumberPassagers != 0 && _wagons.Count == 0)
             {
                 bool isWork = true;
 
-                while (isWork == true && numberPassagers > 0)
+                while (isWork == true && NumberPassagers > 0)
                 {
-                    Console.WriteLine($"Колличество пассажиров : {numberPassagers}\nВыберете Вагон: ");
+                    Console.WriteLine($"Колличество пассажиров : {NumberPassagers}\nВыберете Вагон: ");
 
                     for (int i = 0; i < _typeWagons.Count; i++)
                     {
                         Console.WriteLine($"{i + 1}.Вагоон на {_typeWagons[i]} мест");
                     }
 
-                    bool number = int.TryParse(Console.ReadLine(), out int input);
+                    bool Number = int.TryParse(Console.ReadLine(), out int input);
 
-                    if (number == true)
+                    if (Number == true)
                     {
-                        if (input <= _typeWagons.Count && numberPassagers > 0)
+                        if (input <= _typeWagons.Count && NumberPassagers > 0)
                         {
                             Wagon wagon = new Wagon(_typeWagons[input - 1]);
                             _wagons.Add(wagon);
-                            numberPassagers -= _typeWagons[input - 1];
+                            NumberPassagers -= _typeWagons[input - 1];
                             Console.WriteLine("Вагон добавлен");
                         }
                         else
