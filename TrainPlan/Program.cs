@@ -153,7 +153,7 @@ namespace TrainPlan
             }
         }
 
-        public void RenderTrain()
+        public void Render()
         {
             for (int i = 0; i < _wagons.Count; i++)
             {
@@ -166,14 +166,14 @@ namespace TrainPlan
             Console.WriteLine($"Назначение {_direction.FirstStation} - {_direction.SecondStation}");
             Console.WriteLine($"Количество пассажиров - {NumberPassegers}");
 
-            if (GetTrainLenght() != 0)
+            if (GetLenght() != 0)
             {
                 Console.WriteLine("Состав поезда:");
-                RenderTrain();
+                Render();
             }
         }
 
-        public int GetTrainLenght()
+        public int GetLenght()
         {
             return _wagons.Count;
         }
