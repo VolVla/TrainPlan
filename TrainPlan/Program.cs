@@ -8,18 +8,27 @@ namespace TrainPlan
         static void Main()
         {
             RailStation railStation = new RailStation();
-            List<Train> trainList = railStation.ReturnList();
-            bool isWork = true;
+            railStation.Work();
+        }
+    }
 
-            while (isWork)
+    class RailStation
+    {
+        private List<Train> _trainsList = new List<Train>();
+        private TicketOffice _ticketOffice = new TicketOffice();
+        private bool _isWork = true;
+
+        public void Work()
+        {
+            while (_isWork)
             {
-                if (trainList.Count == 0)
+                if (_trainsList.Count == 0)
                 {
                     Console.WriteLine("Не один поезд ещё не отправлен");
                 }
-                else if (trainList.Count != 0)
+                else if (_trainsList.Count != 0)
                 {
-                    foreach (Train train in trainList)
+                    foreach (Train train in _trainsList)
                     {
                         train.ShowInfoMarch();
                     }
@@ -28,35 +37,24 @@ namespace TrainPlan
                 Console.WriteLine("Нажмите любую кнопку для создания плана поезда");
                 Console.ReadKey();
                 Console.Clear();
-                railStation.CreateTrain();
+                CreateTrain();
                 Console.WriteLine($"Вы хотите выйти из программы?Нажмите Enter.\nДля продолжение работы программы нажмите любую другую клавишу");
 
                 if (Console.ReadKey().Key == ConsoleKey.Enter)
                 {
-                    isWork = false;
+                    _isWork = false;
                     Console.WriteLine("Вы вышли из программы");
                 }
 
                 Console.Clear();
             }
         }
-    }
-
-    class RailStation
-    {
-        private List<Train> _trainsList = new List<Train>();
-        private TicketOffice _ticketOffice = new TicketOffice();
 
         public void CreateTrain()
         {
             Train train = new Train(_ticketOffice.Sell());
             _trainsList.Add(train);
             Console.WriteLine("Поезд отправлен\n");
-        }
-
-        public List<Train> ReturnList()
-        {
-            return _trainsList;
         }
     }
 
@@ -133,9 +131,7 @@ namespace TrainPlan
                         Console.WriteLine($"{i + 1}.Вагоон на {_typeWagons[i]} мест");
                     }
 
-                    bool number = int.TryParse(Console.ReadLine(), out int input);
-
-                    if (number == true)
+                    if (int.TryParse(Console.ReadLine(), out int input))
                     {
                         if (input <= _typeWagons.Count && numberPassagers > 0)
                         {
@@ -153,7 +149,7 @@ namespace TrainPlan
             }
         }
 
-        public void Render()
+        public void ShowWagons()
         {
             for (int i = 0; i < _wagons.Count; i++)
             {
@@ -169,7 +165,7 @@ namespace TrainPlan
             if (GetLenght() != 0)
             {
                 Console.WriteLine("Состав поезда:");
-                Render();
+                ShowWagons();
             }
         }
 
