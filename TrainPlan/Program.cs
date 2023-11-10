@@ -50,7 +50,7 @@ namespace TrainPlan
             }
         }
 
-        public void CreateTrain()
+        private void CreateTrain()
         {
             Train train = new Train(_ticketOffice.Sell());
             _trainsList.Add(train);
@@ -116,7 +116,19 @@ namespace TrainPlan
             AddWagon(NumberPassegers);
         }
 
-        public void AddWagon(int numberPassagers)
+        public void ShowInfoMarch()
+        {
+            Console.WriteLine($"Назначение {_direction.FirstStation} - {_direction.SecondStation}");
+            Console.WriteLine($"Количество пассажиров - {NumberPassegers}");
+
+            if (GetLenght() != 0)
+            {
+                Console.WriteLine("Состав поезда:");
+                ShowWagons();
+            }
+        }
+
+        private void AddWagon(int numberPassagers)
         {
             if (numberPassagers != 0 && _wagons.Count == 0)
             {
@@ -149,7 +161,7 @@ namespace TrainPlan
             }
         }
 
-        public void ShowWagons()
+        private void ShowWagons()
         {
             for (int i = 0; i < _wagons.Count; i++)
             {
@@ -157,19 +169,7 @@ namespace TrainPlan
             }
         }
 
-        public void ShowInfoMarch()
-        {
-            Console.WriteLine($"Назначение {_direction.FirstStation} - {_direction.SecondStation}");
-            Console.WriteLine($"Количество пассажиров - {NumberPassegers}");
-
-            if (GetLenght() != 0)
-            {
-                Console.WriteLine("Состав поезда:");
-                ShowWagons();
-            }
-        }
-
-        public int GetLenght()
+        private int GetLenght()
         {
             return _wagons.Count;
         }
