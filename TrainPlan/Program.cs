@@ -60,9 +60,6 @@ namespace TrainPlan
 
     class Direction
     {
-        public string FirstStation { get; private set; }
-        public string SecondStation { get; private set; }
-
         public Direction()
         {
             bool isWork = true;
@@ -84,6 +81,9 @@ namespace TrainPlan
                 }
             }
         }
+
+        public string FirstStation { get; private set; }
+        public string SecondStation { get; private set; }
     }
 
     class TicketOffice
@@ -107,8 +107,6 @@ namespace TrainPlan
         private List<Wagon> _wagons = new List<Wagon>();
         private Direction _direction;
 
-        public int NumberPassegers { get; private set; }
-
         public Train(int numberPassagers)
         {
             _direction = new Direction();
@@ -116,12 +114,14 @@ namespace TrainPlan
             AddWagon(NumberPassegers);
         }
 
+        public int NumberPassegers { get; private set; }
+
         public void ShowInfoMarch()
         {
             Console.WriteLine($"Назначение {_direction.FirstStation} - {_direction.SecondStation}");
             Console.WriteLine($"Количество пассажиров - {NumberPassegers}");
 
-            if (GetLenght() != 0)
+            if (WagonsCount() > 0)
             {
                 Console.WriteLine("Состав поезда:");
                 ShowWagons();
@@ -145,7 +145,7 @@ namespace TrainPlan
 
                     if (int.TryParse(Console.ReadLine(), out int input))
                     {
-                        if (input <= _typeWagons.Count && numberPassagers > 0)
+                        if ((input > 0 & input <= _typeWagons.Count) && numberPassagers > 0)
                         {
                             Wagon wagon = new Wagon(_typeWagons[input - 1]);
                             _wagons.Add(wagon);
@@ -169,7 +169,7 @@ namespace TrainPlan
             }
         }
 
-        private int GetLenght()
+        private int WagonsCount()
         {
             return _wagons.Count;
         }
@@ -177,11 +177,11 @@ namespace TrainPlan
 
     class Wagon
     {
-        public int NumberPlace { get; private set; }
-
         public Wagon(int lenght)
         {
             NumberPlace = lenght;
         }
+
+        public int NumberPlace { get; private set; }
     }
 }
