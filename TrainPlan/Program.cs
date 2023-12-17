@@ -8,7 +8,7 @@ namespace TrainPlan
         static void Main()
         {
             RailStation railStation = new RailStation();
-            railStation.Work();
+            railStation.WorkStation();
         }
     }
 
@@ -18,7 +18,7 @@ namespace TrainPlan
         private TicketOffice _ticketOffice = new TicketOffice();
         private bool _isWork = true;
 
-        public void Work()
+        public void WorkStation()
         {
             while (_isWork)
             {
@@ -52,7 +52,7 @@ namespace TrainPlan
 
         private void CreateTrain()
         {
-            Train train = new Train(_ticketOffice.Sell());
+            Train train = new Train(_ticketOffice.SellTicket());
             _trainsList.Add(train);
             Console.WriteLine("Поезд отправлен\n");
         }
@@ -62,23 +62,18 @@ namespace TrainPlan
     {
         public Direction()
         {
-            bool isWork = true;
+            Console.WriteLine("Введите станцию отправления:");
+            FirstStation = Console.ReadLine();
+            Console.WriteLine("Введите станцию назначения");
+            SecondStation = Console.ReadLine();
 
-            while (isWork)
+            if (FirstStation.ToLower() == SecondStation.ToLower())
             {
-                Console.WriteLine("Введите станцию отправления:");
-                FirstStation = Console.ReadLine();
-                Console.WriteLine("Введите станцию назначения");
-                SecondStation = Console.ReadLine();
-
-                if (FirstStation.ToLower() == SecondStation.ToLower())
-                {
-                    Console.WriteLine("Станция отправления не должна совпадать со станцией назначение");
-                }
-                else
-                {
-                    isWork = false;
-                }
+                Console.WriteLine("Станция отправления не должна совпадать со станцией назначение");
+            }
+            else
+            {
+                Console.WriteLine("Направление создано");
             }
         }
 
@@ -93,7 +88,7 @@ namespace TrainPlan
         private int _maximumPassager = 101;
         private Random _random = new Random();
 
-        public int Sell()
+        public int SellTicket()
         {
             _numberPassegers = _random.Next(_minimumPassager, _maximumPassager);
             Console.WriteLine($"Продано {_numberPassegers} билетов");
@@ -103,12 +98,14 @@ namespace TrainPlan
 
     class Train
     {
-        private List<int> _typeWagons = new List<int> { 20, 40, 15 };
-        private List<Wagon> _wagons = new List<Wagon>();
+        private List<int> _typeWagons;
+        private List<Wagon> _wagons;
         private Direction _direction;
 
         public Train(int numberPassagers)
         {
+            _wagons = new List<Wagon>();
+            _typeWagons = new List<int> { 20, 40, 15 };
             _direction = new Direction();
             NumberPassegers = numberPassagers;
             AddWagon(NumberPassegers);
@@ -121,7 +118,7 @@ namespace TrainPlan
             Console.WriteLine($"Назначение {_direction.FirstStation} - {_direction.SecondStation}");
             Console.WriteLine($"Количество пассажиров - {NumberPassegers}");
 
-            if (WagonsCount() > 0)
+            if (GetWagonsCount() > 0)
             {
                 Console.WriteLine("Состав поезда:");
                 ShowWagons();
@@ -169,7 +166,7 @@ namespace TrainPlan
             }
         }
 
-        private int WagonsCount()
+        private int GetWagonsCount()
         {
             return _wagons.Count;
         }
