@@ -8,7 +8,7 @@ namespace TrainPlan
         static void Main()
         {
             RailStation railStation = new RailStation();
-            railStation.WorkStation();
+            railStation.Work();
         }
     }
 
@@ -18,7 +18,7 @@ namespace TrainPlan
         private TicketOffice _ticketOffice = new TicketOffice();
         private bool _isWork = true;
 
-        public void WorkStation()
+        public void Work()
         {
             while (_isWork)
             {
