@@ -62,18 +62,24 @@ namespace TrainPlan
     {
         public Direction()
         {
-            Console.WriteLine("Введите станцию отправления:");
-            FirstStation = Console.ReadLine();
-            Console.WriteLine("Введите станцию назначения");
-            SecondStation = Console.ReadLine();
+            bool _isCorrectDirection = false;
 
-            if (FirstStation.ToLower() == SecondStation.ToLower())
+            while (!_isCorrectDirection)
             {
-                Console.WriteLine("Станция отправления не должна совпадать со станцией назначение");
-            }
-            else
-            {
-                Console.WriteLine("Направление создано");
+                Console.WriteLine("Введите станцию отправления:");
+                FirstStation = Console.ReadLine();
+                Console.WriteLine("Введите станцию назначения");
+                SecondStation = Console.ReadLine();
+
+                if (FirstStation.ToLower() == SecondStation.ToLower())
+                {
+                    Console.WriteLine("Станция отправления не должна совпадать со станцией назначение");
+                }
+                else
+                {
+                    _isCorrectDirection = true;
+                    Console.WriteLine("Направление создано");
+                }
             }
         }
 
@@ -129,9 +135,7 @@ namespace TrainPlan
         {
             if (numberPassagers != 0 && _wagons.Count == 0)
             {
-                bool isWork = true;
-
-                while (isWork == true && numberPassagers > 0)
+                while (numberPassagers > 0)
                 {
                     Console.WriteLine($"Колличество пассажиров : {numberPassagers}\nВыберете Вагон: ");
 
@@ -142,7 +146,7 @@ namespace TrainPlan
 
                     if (int.TryParse(Console.ReadLine(), out int input))
                     {
-                        if ((input > 0 & input <= _typeWagons.Count) && numberPassagers > 0)
+                        if (input > 0 & input <= _typeWagons.Count)
                         {
                             Wagon wagon = new Wagon(_typeWagons[input - 1]);
                             _wagons.Add(wagon);
