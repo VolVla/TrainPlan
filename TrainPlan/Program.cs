@@ -64,7 +64,7 @@ namespace TrainPlan
         {
             bool _isCorrectDirection = false;
 
-            while (!_isCorrectDirection)
+            while (_isCorrectDirection == false)
             {
                 Console.WriteLine("Введите станцию отправления:");
                 FirstStation = Console.ReadLine();
